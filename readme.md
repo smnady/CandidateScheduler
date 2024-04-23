@@ -14,3 +14,16 @@ _Доступный функционал:_
 
 Инструкция по запуску: установить `LibericaJDK-21`, клонировать проект, открыть его в IntelliJ IDEA Ultimate, прогрузить все зависимости в pom.xml, запустить метод main класса CandidateScheduler и перейти в браузере по адресу: [http://localhost:8080/]().
 
+Что используется в проекте:
+1) Stream API
+2) Java Collections framework
+3) Database H2
+4) Hibernate
+5) Библиотека Jackson
+6) Java IO
+7) Функциональное программирование
+8) Exceptions
+9) Аннотации
+10) Enum
+11) Библиотека Google Guava для хэширования паролей
+12) Thymeleaf
