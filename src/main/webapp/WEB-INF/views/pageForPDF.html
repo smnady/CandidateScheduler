@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Downloaded page</title>
+    <style>
+        body {
+            font-family: "Comfortaa", sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            height: auto;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .event-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="container">
+    <h1>
+        <strong th:text="${filterType.getDescription()}"></strong>
+    </h1>
+    <div id="event-list" th:if="${not #lists.isEmpty(eventsList)}" >
+
+        <div class="event-item" th:each="event : ${eventsList}">
+            <div>
+                <strong th:text="${event.getType().getDescription()}"></strong>,
+                <span th:text="${event.getDateRepresentation()}"></span>
+                <span th:text="${event.getTime() != null ? ', ' + event.getTime() : ''}"></span>
+            </div>
+            <div th:text="${event.getDescription() != null ? event.description : ''}"></div>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        const content = document.getElementById('container');
+        const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+        html2canvas(content).then(canvas => {
+            let imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+            let remainingHeight = imgHeight - 297;
+            let currentPage = 1;
+
+            while (remainingHeight > 0) {
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, -297 * currentPage, imgWidth, imgHeight);
+                currentPage++;
+                remainingHeight -= 297;
+            }
+            const currentDate = new Date();
+            const fileName = `расписание-${currentDate.getTime()}.pdf`;
+            pdf.save(fileName);
+        });
+        setTimeout(function() {
+            window.location.href = '/events';
+        }, 100);
+    };
+</script>
+</body>
+</html>

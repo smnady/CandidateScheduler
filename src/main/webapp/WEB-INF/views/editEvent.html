@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+    <title>Edit Event</title>
+    <style>
+        body {
+            font-family: "Comfortaa", sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input[type="date"],
+        input[type="text"],
+        textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .reset-time-button {
+
+        }
+
+        .save-button {
+            padding: 12px;
+            background-color: springgreen;
+            color: #000;
+            font-family: "Comfortaa", sans-serif;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .save-button:hover {
+            background-color: aquamarine;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: indigo;
+            color: white;
+            font-family: "Comfortaa", sans-serif;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: inline-block;
+            width: 110px;
+            height: 35px;
+            background-color: #2a2f30;
+            color: white;
+            padding: 10px;
+            margin-right: 10px;
+            text-align: center;
+            vertical-align: center;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .reset-time-button {
+            background-color: indigo;
+            color: white;
+            font-family: "Comfortaa", sans-serif;
+            font-weight: bolder;
+            border-radius: 6px;
+            border-style: none;
+            padding: 7px;
+            border-color: indigo;
+        }
+
+        .form-group input[type="date"],
+        .form-group textarea {
+            display: inline-block;
+            width: calc(100% - 130px);
+            vertical-align: top;
+            box-sizing: border-box;
+        }
+        .form-group input[type="date"] {
+            height: 35px;
+        }
+        .save-button-parent,
+        .back-button-parent {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Редактирование</h1>
+    <form method="POST" th:object="${event}" action="/save-changed-event" class="edit-form">
+        <h3><strong th:text="${event.getType().getDescription()}"></strong></h3>
+        <input type="hidden" th:field="${event.id}" name="id" />
+        <input type="hidden" th:field="${event.type}" name="eventType" />
+        <div class="form-group">
+            <label for="eventDate">Дата </label>
+            <input type="date" id="eventDate" name="eventDate" th:value="${event.getDate()}" required><br>
+        </div>
+        <div class="form-group">
+            <label for="eventTime"> Время </label>
+            <input type="time" id="eventTime" name="eventTime" th:value="${event.time}"><br>
+            <button type="button" id="resetTimeButton" class="reset-time-button">Сбросить время</button>
+        </div>
+        <div class="form-group">
+            <label for="description">Описание </label>
+            <textarea id="description" name="description" th:text="${event.description}"></textarea><br>
+        </div>
+        <div class="save-button-parent">
+            <input type="submit" value="Сохранить изменения" class="save-button">
+        </div>
+    </form>
+    <form th:action="@{/events}" th:method="GET">
+        <div class="back-button-parent">
+            <input type="submit" value="Вернуться к расписанию" class="back-button"/>
+        </div>
+    </form>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const resetTimeButton = document.getElementById("resetTimeButton");
+
+        resetTimeButton.addEventListener("click", function() {
+            const eventTimeInput = document.getElementById("eventTime");
+            eventTimeInput.value = "";
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Scheduler</title>
+    <style>
+        body {
+            font-family: "Comfortaa", sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .register {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .login {
+            background-color: #2ecc71;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="title"> Candidate Scheduler </div>
+
+        <div id="successful-message" class="successful-message" th:text="${successfulMessage}"
+             style="color: green; font-weight: bold;"></div>
+        <div id="error-message" class="error-message" th:text="${error}"
+             style="color: red; font-weight: bold;"></div>
+
+        <button class="button register" onclick="showRegistrationForm()">Зарегистрироваться</button>
+        <button class="button login" onclick="showLoginForm()">Войти</button>
+
+        <div id="registrationForm" style="display: none;">
+            <h2>Форма регистрации</h2>
+            <form action="/register" method="POST">
+                <label for="username">Имя: </label>
+                <input type="text" id="username" name="username" required><br>
+                <label for="patronymic">Отчество: </label>
+                <input type="text" id="patronymic" name="patronymic" required><br>
+                <label for="surname">Фамилия: </label>
+                <input type="text" id="surname" name="surname" required><br>
+                <label for="username">Email: </label>
+                <input type="text" id="email" name="email" required><br>
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required><br>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+        </div>
+
+        <div id="loginForm" style="display: none;">
+            <h2>Форма входа</h2>
+            <form action="/login" method="POST">
+                <label for="email">Email: </label>
+                <input type="text" name="email" required><br>
+                <label for="password">Пароль: </label>
+                <input type="password" name="password" required><br>
+                <button type="submit">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showRegistrationForm() {
+            document.getElementById('registrationForm').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+        }
+
+        function showLoginForm() {
+            document.getElementById('registrationForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

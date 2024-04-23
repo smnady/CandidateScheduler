@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+    <title>Schedule</title>
+    <style>
+        body {
+            font-family: "Comfortaa", sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-bottom: 5px;
+        }
+
+        input[type="date"],
+        input[type="text"],
+        textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: inline-block;
+            width: 110px;
+            height: 35px;
+            background-color: #2a2f30;
+            color: white;
+            padding: 10px;
+            margin-right: 10px;
+            text-align: center;
+            vertical-align: center;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .form-group input[type="date"],
+        .form-group textarea {
+            display: inline-block;
+            width: calc(100% - 130px);
+            vertical-align: top;
+            box-sizing: border-box;
+        }
+        .form-group input[type="date"] {
+            height: 35px;
+        }
+
+        .event-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .event-buttons {
+            display: flex;
+            margin-top: 10px;
+            padding-left: -10px;
+        }
+
+        .create-button,
+        .download-schedule-in-pdf,
+        .export-schedule,
+        .add-button,
+        .filter-today,
+        .filter-all,
+        .filter-past,
+        .filter-day {
+            display: block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            color: #fff;
+            font-family: "Comfortaa", sans-serif;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .create-button {
+            background-color: #3498db;
+        }
+        .download-schedule-in-pdf,
+        .add-button {
+            background-color: indigo;
+        }
+        .filter-buttons-parent {
+            display: flex;
+        }
+        .filter-today,
+        .filter-all,
+        .filter-past,
+        .filter-day {
+            background-color: #3f3e47;
+            margin-right: 2%;
+        }
+        .edit-button,
+        .export-schedule {
+            background-color: #3498db;
+        }
+        a {
+            text-decoration: none;
+        }
+        .export-schedule {
+            display: block;
+            max-width: 230px;
+        }
+        .delete-button {
+            background-color: #e74c3c;
+        }
+        .edit-button,
+        .delete-button {
+            padding: 5px 10px;
+            color: #fff;
+            font-family: "Comfortaa", sans-serif;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .filter-title {
+            background-color: #2a2f30;
+            color: white;
+            height: 35px;
+            padding: 10px;
+            margin-right: 10px;
+            text-align: center;
+            vertical-align: center;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .event-type-buttons input[type="radio"] {
+            display: none;
+            margin: 10px;
+        }
+
+        .event-type-buttons label {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .event-type-buttons input[type="radio"] + label {
+            margin: 7px;
+        }
+
+        .event-type-buttons input[type="radio"]:checked + label {
+            background-color: #e74c3c;
+        }
+        #datePickerContainer {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #datePickerContainer label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #datePickerContainer input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #datePickerContainer button {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #datePickerContainer button:hover {
+            background-color: #27ae60;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Расписание</h1>
+
+    <button class="create-button" onclick="showCreateEventForm()">Добавить новое мероприятие</button>
+    <form th:method="GET" th:action="@{/download-schedule}">
+        <input type="hidden" name="filterType" th:value="${filterType}"/>
+        <th:block th:each="event : ${eventsList}">
+            <input type="hidden" name="eventsList" th:value="${event.id}"/>
+        </th:block>
+        <button class="download-schedule-in-pdf">Скачать расписание в формате PDF</button>
+    </form>
+    <a href="/export-schedule" class="export-schedule" download="schedule.json">
+        Экспортировать данные</a>
+    <div id="create-event-form" style="display: none;">
+        <h2>Новое мероприятие</h2>
+        <form action="/create-event" method="POST">
+            <label>Тип мероприятия:</label><br>
+            <div class="event-type-buttons">
+                <input type="radio" id="debate" name="eventType" value="DEBATE" required>
+                <label for="debate">Дебаты</label>
+
+                <input type="radio" id="meeting" name="eventType" value="MEETING_WITH_VOTERS" required>
+                <label for="meeting">Встреча с избирателями</label>
+
+                <input type="radio" id="press-confidentiality" name="eventType"
+                       value="PRESS_CONFIDENTIALITY" required>
+                <label for="press-confidentiality">Пресс-конференция</label>
+
+                <input type="radio" id="elaboration-of-theses" name="eventType"
+                       value="ELABORATION_OF_THESES" required>
+                <label for="elaboration-of-theses">Проработка тезисов</label>
+
+                <input type="radio" id="meeting-with-team" name="eventType"
+                       value="MEETING_WITH_TEAM" required>
+                <label for="meeting-with-team">Встреча с командой</label>
+
+                <input type="radio" id="default-event" name="eventType"
+                       value="DEFAULT_EVENT" required>
+                <label for="default-event">Другое</label>
+            </div>
+            <div class="form-group">
+                <label for="event-date">Дата: </label>
+                <input type="date" id="event-date" name="eventDate" required><br>
+            </div>
+            <div class="form-group">
+                <label for="event-time">Время: </label>
+                <input type="time" id="event-time" name="eventTime"><br>
+            </div>
+            <div class="form-group">
+                <label for="event-description">Описание:</label>
+                <textarea id="event-description" name="eventDescription"></textarea><br>
+            </div>
+            <button type="submit" class="add-button">Добавить</button>
+        </form>
+        <br>
+        <br>
+    </div>
+
+    <form id="filter-form" action="/events" method="GET" class="filter-buttons-parent">
+        <div class="filter-title">Фильтры: </div>
+        <input type="hidden" id="filterType" name="filterType" value="ALL"/>
+        <button class="filter-all" onclick="filterSchedule('ALL')">Все запланированные мероприятия</button>
+        <button class="filter-today" onclick="filterSchedule('TODAY')">Расписание на сегодня</button>
+        <button class="filter-past" onclick="filterSchedule('PAST')">Прошедшие мероприятия</button>
+        <button class="filter-day" onclick="showDatePicker()">Расписание на конкретный день</button>
+        <div id="datePickerContainer" style="display: none;">
+            <span class="close-button" onclick="closeDatePicker()">✖</span>
+            <label for="filterDate">Выберите дату:</label>
+            <input type="date" id="filterDate" name="filterDate" onchange="setFilterDate(this.value)">
+            <button onclick="filterSchedule('BY_DATE')">Применить фильтр</button>
+        </div>
+    </form>
+    <div id="event-list" th:if="${not #lists.isEmpty(eventsList)}" >
+
+        <div class="event-item" th:each="event : ${eventsList}">
+            <div>
+                <strong th:text="${event.getType().getDescription()}"></strong>,
+                <span th:text="${event.getDateRepresentation()}"></span>
+                <span th:text="${event.getTime() != null ? ', ' + event.getTime() : ''}"></span>
+            </div>
+            <div th:text="${event.getDescription() != null ? event.description : ''}"></div>
+            <div class="event-buttons">
+                <form method="POST" th:action="@{/edit-event}" th:object="${event.id}">
+                    <input type="hidden" name="eventId" th:value="${event.id}" />
+                    <button type="submit" class="edit-button"> Изменить </button>
+                </form>
+                <div style="margin-left: 10px;"></div>
+                <form method="POST" th:action="@{/delete-event}">
+                    <input type="hidden" name="eventId" th:value="${event.id}" />
+                    <input type="submit" value="Удалить" class="delete-button" />
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+    <script>
+        function showCreateEventForm() {
+            document.getElementById('create-event-form').style.display = 'block';
+        }
+        function filterSchedule(filterType) {
+            document.getElementById('filterType').value = filterType;
+        }
+        function showDatePicker() {
+            document.getElementById('datePickerContainer').style.display = 'block';
+            document.getElementById('filterDate').required = true;
+        }
+
+        function setFilterDate(date) {
+            document.getElementById('filterDate').value = date;
+        }
+
+        function closeDatePicker() {
+            document.getElementById('datePickerContainer').style.display = 'none';
+            document.getElementById('filterDate').required = false;
+            document.getElementById('filterDate').value = '';
+        }
+
+        function downloadScedule() {
+
+        }
+    </script>
+</body>
+</html>
