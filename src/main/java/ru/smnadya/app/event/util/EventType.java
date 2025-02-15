@@ -1,6 +1,7 @@
-package ru.smnadya.app.constants;
+package ru.smnadya.app.event.util;
 
 public enum EventType {
+
     DEBATE("Дебаты"),
     MEETING_WITH_VOTERS("Встреча с избирателями"),
     PRESS_CONFIDENTIALITY("Пресс-конференция"),
@@ -9,10 +10,13 @@ public enum EventType {
     DEFAULT_EVENT("Мероприятие");
 
     private final String description;
+
     EventType(String description) {
         this.description = description;
     }
+
     public String getDescription() {
         return description;
     }
+
 }

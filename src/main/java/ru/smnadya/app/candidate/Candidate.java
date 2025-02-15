@@ -1,23 +1,46 @@
-package ru.smnadya.app.models;
+package ru.smnadya.app.candidate;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import ru.smnadya.app.event.Event;
 
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "candidate")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Candidate {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "name", nullable = false)
     @NotEmpty(message = "Нужно указать имя")
     private String name;
+
     @Column(name = "patronymic", nullable = false)
     @NotEmpty(message = "Нужно указать отчество")
     private String patronymic;
+
     @Column(name = "surname", nullable = false)
     @NotEmpty(message = "Нужно указать фамилию")
     private String surname;
@@ -25,12 +48,12 @@ public class Candidate {
     @Column(name = "email", unique = true, nullable = false)
     @NotEmpty(message = "Нужно указать адрес эл. почты")
     private String email;
+
     @Column(name = "hash_of_password", nullable = false)
     private String hashOfPassword;
+
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
     private List<Event> events;
-
-    public Candidate() {}
 
     public Candidate(String name, String patronymic, String surname,
                      String email, String hashOfPassword) {
@@ -51,62 +74,6 @@ public class Candidate {
         this.hashOfPassword = hashOfPassword;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPatronymic() {
-        return patronymic;
-    }
-
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getHashOfPassword() {
-        return hashOfPassword;
-    }
-
-    public void setHashOfPassword(String hashOfPassword) {
-        this.hashOfPassword = hashOfPassword;
-    }
-
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,4 +86,16 @@ public class Candidate {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Candidate{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
 }

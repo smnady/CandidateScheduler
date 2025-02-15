@@ -1,12 +1,24 @@
-package ru.smnadya.app.models;
+package ru.smnadya.app.event;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import ru.smnadya.app.constants.EventType;
+import lombok.Getter;
+import lombok.Setter;
+import ru.smnadya.app.candidate.Candidate;
+import ru.smnadya.app.event.util.EventType;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,22 +30,29 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 
 @Entity
 @Table(name = "event")
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Event implements Comparable<Event>{
+public class Event implements Comparable<Event> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(name = "event_date", nullable = false)
     @NotNull(message = "Установите дату мероприятия")
     @JsonProperty("date")
     private LocalDate date;
+
     @Column(name = "event_time")
     @JsonProperty("time")
     private LocalTime time;
+
     @Enumerated(EnumType.STRING)
     @JsonProperty("type")
     private EventType type;
+
     @Column(name = "description")
     @JsonProperty("description")
     private String description;
@@ -43,7 +62,8 @@ public class Event implements Comparable<Event>{
     @JsonIgnore
     private Candidate candidate;
 
-    public Event() {}
+    public Event() {
+    }
 
     public Event(String description, LocalDate date,
                  LocalTime time, EventType type, Candidate candidate) {
@@ -61,55 +81,10 @@ public class Event implements Comparable<Event>{
         this.time = eventTime;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public @NotNull LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(@NotNull LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
     public String getDateRepresentation() {
         DateTimeFormatter dateTimeFormatter =
                 ofPattern("dd MMMM yyyy", new Locale("ru"));
         return date.format(dateTimeFormatter);
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-    public boolean isTimeSet() {
-        return time != null;
-    }
-    public EventType getType() {
-        return type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Candidate getCandidate() {
-        return candidate;
-    }
-
-    public void setCandidate(Candidate candidate) {
-        this.candidate = candidate;
     }
 
     @Override
@@ -132,4 +107,5 @@ public class Event implements Comparable<Event>{
     public int hashCode() {
         return Objects.hash(date, time, type, description);
     }
+
 }
